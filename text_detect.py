@@ -12,20 +12,6 @@ import matplotlib.pyplot as plt
 import progressbar
 import pytesseract
 
-## Arguments
-parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--image", type=str, help="Path to the input image")
-parser.add_argument("-o", "--output", type=str, help="Path to the output image")
-parser.add_argument("-d", "--direction", default='both+', type=str, choices=set(("light", "dark", "both", "both+")), help="Text searching")
-parser.add_argument("-t", "--tesseract", action='store_true', help="Tesseract assistance")
-parser.add_argument("-f", "--fulltesseract", action='store_true', help="Full Tesseract")
-args = vars(parser.parse_args())
-IMAGE_PATH = args["image"]
-OUTPUT_PATH = args["output"]
-DIRECTION = args["direction"]
-TESS = args["tesseract"]
-FULL_OCR = args["fulltesseract"]
-
 ## Parameters
 AREA_LIM = 2.0e-4
 PERIMETER_LIM = 1e-4
@@ -40,6 +26,8 @@ STEP_LIMIT = 10
 KSIZE = 3
 ITERATION = 7
 MARGIN = 10
+DIRECTION = "both+"
+TESS = False
 
 ## Displaying function
 def pltShow(*images):
@@ -334,15 +322,3 @@ class TextDetection(object):
 
 		# pltShow((img, "Original"), (bounded, "Boxes"), (res, "Mask"))
 		return bounded, res
-
-if IMAGE_PATH:
-	td = TextDetection(IMAGE_PATH)
-	if FULL_OCR:
-		bounded, res = td.fullOCR()
-		pltShow((td.img, "Original"), (bounded, "Final"), (res, "Mask"))
-	else:
-		res = td.detect()
-		pltShow((td.img, "Original"), (td.final, "Final"), (res, "Mask"))
-		if OUTPUT_PATH:
-			plt.imsave(OUTPUT_PATH, td.final)
-			print("{} saved".format(OUTPUT_PATH))
